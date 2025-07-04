@@ -1,66 +1,103 @@
-## Foundry
+# 🔐 MultiSig Wallet using Foundry on Rootstock
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A smart contract that enables multiple wallet owners to collectively manage and approve transactions before they are executed. Built using [Foundry](https://getfoundry.sh/) and deployed on the [Rootstock Testnet](https://rootstock.io/).
 
-Foundry consists of:
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## 📌 Features
 
-## Documentation
+- Multiple Owners: Allows deploying the wallet with multiple addresses as co-owners.
+- Transaction Submission: Any owner can propose a transaction to be approved.
+- Confirmation Threshold: A transaction executes only after a set number of owners approve it.
+- Revoke Confirmation: An owner can revoke their confirmation before execution.
+- Secure Execution: Only transactions with enough approvals are executed on-chain.
+- Rootstock Support: Fully compatible with the Rootstock Testnet for development and deployment.
 
-https://book.getfoundry.sh/
 
-## Usage
+## 📋 Prerequisites
 
-### Build
+Before running this project, make sure you have the following:
 
-```shell
-$ forge build
+- [Foundry](https://getfoundry.sh/): Installed via curl -L https://foundry.paradigm.xyz | bash
+- [Node.js](https://nodejs.org/en) and [npm](https://www.npmjs.com/) installed
+- Git installed
+- An RSK-compatible wallet (like MetaMask) configured with the Rootstock Testnet
+- A Rootstock Testnet RPC URL (e.g., https://public-node.testnet.rsk.co)
+- Some testnet RBTC (can be obtained from a [faucet](https://faucet.rootstock.io/))
+- A private key (for deployment) stored safely in .env
+
+## ⚙️ Installation
+
+
+
+```bash
+  git clone https://github.com/sainath5001/MultiSig_Wallet.git
+  cd multisig-wallet
+```
+```bash
+  forge install
+```    
+### 🗂️ Project Structure
+
+```
+multisig-wallet-rootstock/
+├── src/             # Main contract (MultiSigWallet.sol)
+├── test/            # Unit tests written with Foundry
+├── script/          # Deployment scripts
+├── .env.example     # Environment variables template
+├── foundry.toml     # Foundry configuration
+└── README.md        # Project overview and setup guide
 ```
 
-### Test
+## 🧪 Running Tests
 
-```shell
-$ forge test
+Run the Foundry unit tests to verify that the contract logic is working as expected:
+
+
+```bash
+forge test
 ```
 
-### Format
+🔍 For more detailed logs, use:
 
-```shell
-$ forge fmt
+```bash
+forge test -vv
 ```
 
-### Gas Snapshots
+Briefly list which features you’ve written tests for:
+- Transaction submission and event
+- Multi-owner confirmation logic
+- Threshold enforcement
+- Execution success/failure
+- Revoke confirmation
 
-```shell
-$ forge snapshot
+
+## 🚀 Deployment
+
+To deploy the MultiSig Wallet contract on the Rootstock Testnet, follow these steps:
+    
+#### 1.Set up your .env file with your private key and RPC URL:
+```bash
+PRIVATE_KEY=your_private_key
+ROOTSTOCK_RPC=https://public-node.testnet.rsk.co
 ```
-
-### Anvil
-
-```shell
-$ anvil
+#### 2.Run the deploy script:
+```bash
+forge script script/Deploy.s.sol --rpc-url $ROOTSTOCK_RPC --private-key $PRIVATE_KEY --broadcast --legacy
 ```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+#### 3.✅ After deployment, copy the contract address:
+```bash
+Deployed to: 0xYourDeployedContractAddress
 ```
+🔗 View your contract on the [Rootstock Testnet Explorer](https://explorer.testnet.rootstock.io/)
+## 🧠 Key Functions
 
-### Cast
+- `submitTransaction()`: Allows an owner to propose a transaction.
+- `confirmTransaction()`: Lets an owner approve a proposed transaction.
+- `executeTransaction()`: Executes a transaction if enough confirmations exist.
+- `revokeConfirmation()`: Enables an owner to revoke their approval before execution.
 
-```shell
-$ cast <subcommand>
-```
+## 📜 License
 
-### Help
+This project is licensed under the MIT License.
+[MIT](https://choosealicense.com/licenses/mit/)
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```

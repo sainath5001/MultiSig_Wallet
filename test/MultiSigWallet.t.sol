@@ -7,7 +7,7 @@ import {DeployMultiSigWallet} from "../script/DeployMultiSigWallet.s.sol";
 import {MultisigWallet} from "../src/MultiSigWallet.sol";
 
 contract MultiSigWalletTest is Test {
-MultisigWallet multisig;
+    MultisigWallet multisig;
     address[] public owners;
     address public owner1 = address(0x1);
     address public owner2 = address(0x2);
@@ -21,7 +21,7 @@ MultisigWallet multisig;
 
         vm.prank(owner1); // simulate owner1 deploying the contract
         multisig = new MultisigWallet(owners, 2);
-        
+
         // Fund the wallet with 1 ETH
         vm.deal(address(multisig), 1 ether);
     }
@@ -41,7 +41,7 @@ MultisigWallet multisig;
         multisig.confirmTransaction(0);
 
         // check internal state using a view call
-        (, , , , uint256 numConfirmations) = multisig.getTransaction(0);
+        (,,,, uint256 numConfirmations) = multisig.getTransaction(0);
         assertEq(numConfirmations, 1);
     }
 
@@ -95,8 +95,7 @@ MultisigWallet multisig;
         assertEq(recipient.balance, initialBalance + 0.1 ether);
 
         // Ensure the transaction is marked as executed
-        (, , , bool executed, ) = multisig.getTransaction(0);
+        (,,, bool executed,) = multisig.getTransaction(0);
         assertTrue(executed);
-    }    
-
+    }
 }

@@ -17,14 +17,9 @@ contract DeployMultiSigWallet is Script {
         uint256 minNumOfConfirmations = 2;
 
         vm.startBroadcast();
-        MultisigWallet multisigWallet = new MultisigWallet(
-            owners,
-            minNumOfConfirmations
-        );
+        MultisigWallet multisigWallet = new MultisigWallet(owners, minNumOfConfirmations);
         vm.stopBroadcast();
 
         console.log("Multisig Wallet deployed at:", address(multisigWallet));
     }
 }
-
-
