@@ -31,10 +31,13 @@ Before running this project, make sure you have the following:
 
 ```bash
   git clone https://github.com/sainath5001/MultiSig_Wallet.git
-  cd multisig-wallet
+  cd multisig_wallet
 ```
 ```bash
   forge install
+```    
+```bash
+  forge install OpenZeppelin/openzeppelin-contracts
 ```    
 ### 🗂️ Project Structure
 
