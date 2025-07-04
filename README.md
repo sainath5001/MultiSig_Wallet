@@ -83,11 +83,17 @@ To deploy the MultiSig Wallet contract on the Rootstock Testnet, follow these st
 PRIVATE_KEY=your_private_key
 ROOTSTOCK_RPC=https://public-node.testnet.rsk.co
 ```
-#### 2.Run the deploy script:
+#### 2.✅ Set the 3 owners:
 ```bash
-forge script script/Deploy.s.sol --rpc-url $ROOTSTOCK_RPC --private-key $PRIVATE_KEY --broadcast --legacy
+export OWNER_1=0x1234567890123456789012345678901234567890
+export OWNER_2=0xabcdefabcdefabcdefabcdefabcdefabcdefabcd
+export OWNER_3=0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef
 ```
-#### 3.✅ After deployment, copy the contract address:
+#### 3..Run the deploy script:
+```bash
+forge script script/DeployMultiSigWallet.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast --legacy 
+```
+#### 4.✅ After deployment, copy the contract address:
 ```bash
 Deployed to: 0xYourDeployedContractAddress
 ```
