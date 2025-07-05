@@ -7,6 +7,8 @@ import {DeployMultiSigWallet} from "../script/DeployMultiSigWallet.s.sol";
 import {MultisigWallet} from "../src/MultiSigWallet.sol";
 
 contract MultiSigWalletTest is Test {
+    event Deposit(address indexed sender, uint256 amount);
+
     MultisigWallet multisig;
     address[] public owners;
     address public owner1 = address(0x1);
@@ -97,5 +99,13 @@ contract MultiSigWalletTest is Test {
         // Ensure the transaction is marked as executed
         (,,, bool executed,) = multisig.getTransaction(0);
         assertTrue(executed);
+    }
+
+    function testDepositEmitsEvent() public {
+        vm.expectEmit(true, true, false, true);
+        emit Deposit(address(this), 1 ether);
+
+        (bool sent,) = address(multisig).call{value: 1 ether}("");
+        assertTrue(sent);
     }
 }
