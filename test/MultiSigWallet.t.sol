@@ -108,4 +108,15 @@ contract MultiSigWalletTest is Test {
         (bool sent,) = address(multisig).call{value: 1 ether}("");
         assertTrue(sent);
     }
+
+    function testGetTransaction() public {
+        vm.prank(owner1);
+        multisig.submitTransaction(payable(address(0xABCD)), 0.5 ether, "");
+
+        (address to, uint256 value,, bool executed,) = multisig.getTransaction(0);
+
+        assertEq(to, address(0xABCD));
+        assertEq(value, 0.5 ether);
+        assertFalse(executed);
+    }
 }
