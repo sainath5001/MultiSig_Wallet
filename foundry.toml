@@ -4,7 +4,8 @@ out = "out"
 libs = ["lib"]
 remappings = [
     '@openzeppelin/=lib/openzeppelin-contracts/',
-    '@chainlink/=lib/chainlink/',
+    '@chainlink/=lib/chainlink/', 
+    '@gnosis-safe/=lib/gnosis-safe/',
 ]
 
 
