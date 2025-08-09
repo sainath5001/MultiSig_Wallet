@@ -119,4 +119,12 @@ contract MultiSigWalletTest is Test {
         assertEq(value, 0.5 ether);
         assertFalse(executed);
     }
+
+    function testGetTransactionCount() public {
+        vm.prank(owner1);
+        multisig.submitTransaction(payable(address(0xABCD)), 0.1 ether, "");
+
+        uint256 count = multisig.getTransactionCount();
+        assertEq(count, 2);
+    }
 }
