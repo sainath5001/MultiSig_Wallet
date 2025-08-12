@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract MultisigWallet is ReentrancyGuard {
     address[] public owners;
@@ -36,27 +36,19 @@ contract MultisigWallet is ReentrancyGuard {
     }
 
     modifier notExecuted(uint256 _txIndex) {
-        require(
-            !transactions[_txIndex].executed,
-            "Transaction already executed"
-        );
+        require(!transactions[_txIndex].executed, "Transaction already executed");
         _;
     }
 
     modifier notConfirmed(uint256 _txIndex) {
-        require(
-            !isConfirmed[_txIndex][msg.sender],
-            "Transaction already confirmed"
-        );
+        require(!isConfirmed[_txIndex][msg.sender], "Transaction already confirmed");
         _;
     }
 
     constructor(address[] memory _owners, uint256 _minNumOfConfirmations) {
         require(_owners.length > 0, "At least one owner required");
         require(
-            _minNumOfConfirmations > 0 &&
-                _minNumOfConfirmations <= _owners.length,
-            "Invalid number of confirmations"
+            _minNumOfConfirmations > 0 && _minNumOfConfirmations <= _owners.length, "Invalid number of confirmations"
         );
 
         for (uint256 i = 0; i < _owners.length; i++) {
@@ -71,29 +63,15 @@ contract MultisigWallet is ReentrancyGuard {
         minNumOfConfirmations = _minNumOfConfirmations;
     }
 
-    function submitTransaction(
-        address _to,
-        uint256 _value,
-        bytes memory _data
-    ) public onlyOwner {
+    function submitTransaction(address _to, uint256 _value, bytes memory _data) public onlyOwner {
         uint256 txIndex = transactions.length;
 
-        transactions.push(
-            Transaction({
-                to: _to,
-                value: _value,
-                data: _data,
-                executed: false,
-                numOfConfirmations: 0
-            })
-        );
+        transactions.push(Transaction({to: _to, value: _value, data: _data, executed: false, numOfConfirmations: 0}));
 
         emit Submit(txIndex, msg.sender);
     }
 
-    function confirmTransaction(
-        uint256 _txIndex
-    )
+    function confirmTransaction(uint256 _txIndex)
         public
         onlyOwner
         txExists(_txIndex)
@@ -107,21 +85,20 @@ contract MultisigWallet is ReentrancyGuard {
         emit Confirm(_txIndex, msg.sender);
     }
 
-    function executeTransaction(
-        uint256 _txIndex
-    ) public onlyOwner txExists(_txIndex) notExecuted(_txIndex) nonReentrant {
+    function executeTransaction(uint256 _txIndex)
+        public
+        onlyOwner
+        txExists(_txIndex)
+        notExecuted(_txIndex)
+        nonReentrant
+    {
         Transaction storage transaction = transactions[_txIndex];
 
-        require(
-            transaction.numOfConfirmations >= minNumOfConfirmations,
-            "Not enough confirmations"
-        );
+        require(transaction.numOfConfirmations >= minNumOfConfirmations, "Not enough confirmations");
 
         transaction.executed = true;
 
-        (bool success, ) = transaction.to.call{value: transaction.value}(
-            transaction.data
-        );
+        (bool success,) = transaction.to.call{value: transaction.value}(transaction.data);
         require(success, "Transaction failed");
 
         emit Execute(_txIndex, msg.sender);
@@ -135,26 +112,13 @@ contract MultisigWallet is ReentrancyGuard {
         return transactions.length;
     }
 
-    function getTransaction(
-        uint256 _txIndex
-    )
+    function getTransaction(uint256 _txIndex)
         public
         view
-        returns (
-            address to,
-            uint256 value,
-            bytes memory data,
-            bool executed,
-            uint256 numOfConfirmations
-        )
+        returns (address to, uint256 value, bytes memory data, bool executed, uint256 numOfConfirmations)
     {
         Transaction storage transaction = transactions[_txIndex];
-        return (
-            transaction.to,
-            transaction.value,
-            transaction.data,
-            transaction.executed,
-            transaction.numOfConfirmations
-        );
+        return
+            (transaction.to, transaction.value, transaction.data, transaction.executed, transaction.numOfConfirmations);
     }
 }
