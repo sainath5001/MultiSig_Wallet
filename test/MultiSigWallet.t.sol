@@ -98,4 +98,89 @@ contract MultiSigWalletTest is Test {
         (,,, bool executed,) = multisig.getTransaction(0);
         assertTrue(executed);
     }
+
+    function testDepositEmitsEvent() public {
+        vm.expectEmit(true, true, false, true);
+        emit Deposit(address(this), 1 ether);
+
+        (bool sent,) = address(multisig).call{value: 1 ether}("");
+        assertTrue(sent);
+    }
+
+    function testGetTransaction() public {
+        vm.prank(owner1);
+        multisig.submitTransaction(payable(address(0xABCD)), 0.5 ether, "");
+
+        (address to, uint256 value,, bool executed,) = multisig.getTransaction(0);
+
+        assertEq(to, address(0xABCD));
+        assertEq(value, 0.5 ether);
+        assertFalse(executed);
+    }
+
+    // function testGetTransactionCount() public {
+    //     vm.prank(owner1);
+    //     multisig.submitTransaction(payable(address(0xABCD)), 0.1 ether, "");
+
+    //     uint256 count = multisig.getTransactionCount();
+    //     assertEq(count, 2);
+    // }
+
+    function testGetTransactionCount() public {
+        vm.prank(owner1);
+        multisig.submitTransaction(payable(address(0xABCD)), 0.1 ether, "");
+
+        uint256 count = multisig.getTransactionCount();
+        assertEq(count, 2);
+    }
+
+    function testfuzzing() public {
+        DeployMultiSigWallet deployer = new DeployMultiSigWallet();
+        address multisigAddress = deployer.run();
+        MultisigWallet fuzzingMultisig = MultisigWallet(multisigAddress);
+
+        vm.startPrank(owner1);
+        fuzzingMultisig.submitTransaction(payable(address(0xABCD)), 0.1 ether, "");
+        vm.stopPrank();
+
+        // Fuzzing logic can be added here
+    }
+
+    function testfuzzingWithMultipleOwners() public {
+        DeployMultiSigWallet deployer = new DeployMultiSigWallet();
+        address multisigAddress = deployer.run();
+        MultisigWallet fuzzingMultisig = MultisigWallet(multisigAddress);
+
+        vm.startPrank(owner1);
+        fuzzingMultisig.submitTransaction(payable(address(0xABCD)), 0.1 ether, "");
+        vm.stopPrank();
+
+        // Fuzzing logic can be added here
+    }
+
+    function testFuzzingWithMultipleOwnersAndTransactions() public {
+        DeployMultiSigWallet deployer = new DeployMultiSigWallet();
+        address multisigAddress = deployer.run();
+        MultisigWallet fuzzingMultisig = MultisigWallet(multisigAddress);
+
+        vm.startPrank(owner1);
+        fuzzingMultisig.submitTransaction(payable(address(0xABCD)), 0.1 ether, "");
+        fuzzingMultisig.submitTransaction(payable(address(0xEF GH)), 0.2 ether, "");
+        vm.stopPrank();
+
+        // Fuzzing logic can be added here
+    }
+
+    function testfuzzingconformTransaction() public {
+        DeployMultiSigWallet deployer = new DeployMultiSigWallet();
+        address multisigAddress = deployer.run();
+        MultisigWallet fuzzingMultisig = MultisigWallet(multisigAddress);
+        vm.startPrank(owner1);
+        fuzzingMultisig.submitTransaction(payable(address(0xABCD)), 0.1 ether, "");
+        vm.stopPrank();
+        vm.startPrank(owner2);
+        fuzzingMultisig.confirmTransaction(0);
+        vm.stopPrank();
+        // Fuzzing logic can be added here
+    }
 }
