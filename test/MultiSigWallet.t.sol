@@ -183,4 +183,35 @@ contract MultiSigWalletTest is Test {
         vm.stopPrank();
         // Fuzzing logic can be added here
     }
+
+    function testfuzzingConfirmTransaction() public {
+        DeployMultiSigWallet deployer = new DeployMultiSigWallet();
+        address multisigAddress = deployer.run();
+        MultisigWallet fuzzingMultisig = MultisigWallet(multisigAddress);
+        vm.startPrank(owner1);
+        fuzzingMultisig.submitTransaction(payable(address(0xABCD)), 0.1 ether, "");
+        vm.stopPrank();
+        vm.startPrank(owner2);
+        fuzzingMultisig.confirmTransaction(0);
+        vm.stopPrank();
+        // Fuzzing logic can be added here
+    }
+
+    function testFuzzingExecuteTransaction() public {
+        DeployMultiSigWallet deployer = new DeployMultiSigWallet();
+        address multisigAddress = deployer.run();
+        MultisigWallet fuzzingMultisig = MultisigWallet(multisigAddress);
+
+        vm.startPrank(owner1);
+        fuzzingMultisig.submitTransaction(payable(address(0xABCD)), 0.1 ether, "");
+        fuzzingMultisig.confirmTransaction(0);
+        fuzzingMultisig.confirmTransaction(0);
+        vm.stopPrank();
+
+        vm.startPrank(owner1);
+        fuzzingMultisig.executeTransaction(0);
+        vm.stopPrank();
+
+        // Fuzzing logic can be added here
+    }
 }
